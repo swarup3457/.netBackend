@@ -26,3 +26,4 @@ C:\Project\CapstoneDAL\bin\Debug\net8.0\CapstoneDAL.dll
 C:\Project\CapstoneDAL\bin\Debug\net8.0\CapstoneDAL.pdb
 C:\Project\CapstoneDAL\obj\Debug\net8.0\CapstoneDAL.genruntimeconfig.cache
 C:\Project\CapstoneDAL\obj\Debug\net8.0\ref\CapstoneDAL.dll
+C:\Project\CapstoneDAL\obj\Debug\net8.0\CapstoneDAL.sourcelink.json

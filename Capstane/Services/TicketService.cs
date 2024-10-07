@@ -141,5 +141,26 @@ namespace Capstone.Services
             return ticket;
         }
 
+
+        public async Task<List<Ticket>> FindTicketsByUserIdAndCreatedAtBetweenAsync(long userId, DateTime startDate, DateTime endDate)
+        {
+            var tickets = await _context.Tickets
+                .Where(t => t.UserId == userId && t.CreatedAt >= startDate && t.CreatedAt <= endDate)
+                .ToListAsync();
+
+            return tickets;
+        }
+
+        // Method to find tickets by a date range (without UserId)
+        public async Task<List<Ticket>> FindTicketsByCreatedAtBetweenAsync(DateTime startDate, DateTime endDate)
+        {
+            var tickets = await _context.Tickets
+                .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDate)
+                .ToListAsync();
+
+            return tickets;
+        }
+
+
     }
 }

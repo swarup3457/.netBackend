@@ -276,3 +276,5 @@ C:\Project\Capstane\obj\Debug\net8.0\scopedcss\bundle\Capstane.styles.css
 C:\Project\Capstane\obj\Debug\net8.0\Capstane.csproj.Up2Date
 C:\Project\Capstane\obj\Debug\net8.0\Capstane.genruntimeconfig.cache
 C:\Project\Capstane\obj\Debug\net8.0\ref\Capstane.dll
+C:\Project\Capstane\obj\Debug\net8.0\Capstane.sourcelink.json
+C:\Project\Capstane\bin\Debug\net8.0\CsvHelper.dll

@@ -2,6 +2,7 @@
 using TicketManagement.Services;
 using Microsoft.AspNetCore.Cors;
 using Capstone.Models;
+using Capstone.Models.Entities;
 
 namespace TicketManagement.Controllers
 {
@@ -53,6 +54,18 @@ namespace TicketManagement.Controllers
                 return NotFound(); // 404 Not Found
             }
             return Ok(displayAgent); // 200 OK
+        }
+
+
+        [HttpGet("agents/{agentId}/tickets")]
+        public async Task<ActionResult<List<Ticket>>> GetTicketsByAgentId(long agentId)
+        {
+            var tickets = await _displayAgentService.GetTicketsByAgentIdAsync(agentId);
+            if (tickets == null || tickets.Count == 0)
+            {
+                return NotFound("No tickets found for the given agent.");
+            }
+            return Ok(tickets);
         }
     }
 }

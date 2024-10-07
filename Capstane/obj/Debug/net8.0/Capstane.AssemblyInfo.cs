@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Capstane")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94df3ae34b668a9b51c885bb13f939b748f4bf3b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Capstane")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Capstane")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

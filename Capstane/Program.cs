@@ -35,6 +35,10 @@ namespace Capstane
             builder.Services.AddScoped<TicketService>();
             builder.Services.AddScoped<AdminService>();
 
+            builder.Services.AddTransient< TicketService>(); // Register ITicketRepository and its implementation
+
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 
             builder.Services.AddCors(options =>
 			{

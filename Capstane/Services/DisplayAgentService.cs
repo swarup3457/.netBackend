@@ -1,4 +1,7 @@
 ﻿using Capstone.Models;
+using Capstone.Models.Entities;
+using CapstoneDAL;
+using Microsoft.EntityFrameworkCore;
 using TicketManagement.Repositories;
 
 namespace TicketManagement.Services
@@ -7,12 +10,14 @@ namespace TicketManagement.Services
     {
         private readonly IAgentRepository _agentRepository;
         private readonly IDisplayAgentRepository _displayAgentRepository;
+        private readonly CapstoneDbContext _context;
 
         // Constructor injection for repositories
-        public DisplayAgentService(AgentRepository agentRepository, DisplayAgentRepository displayAgentRepository)
+        public DisplayAgentService(AgentRepository agentRepository, DisplayAgentRepository displayAgentRepository, CapstoneDbContext _context)
         {
             _agentRepository = agentRepository;
             _displayAgentRepository = displayAgentRepository;
+            this._context=_context;
         }
 
         // Add Agent to DisplayAgents
@@ -61,6 +66,13 @@ namespace TicketManagement.Services
         {
             var displayAgent = _displayAgentRepository.GetById(id);
             return displayAgent;
+        }
+
+        public async Task<List<Ticket>> GetTicketsByAgentIdAsync(long agentId)
+        {
+            return await _context.Tickets
+                .Where(ticket => ticket.AssignedAgentEntity != null && ticket.AssignedAgentEntity.Id == agentId)
+                .ToListAsync();
         }
     }
 }
