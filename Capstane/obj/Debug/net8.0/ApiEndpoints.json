@@ -197,7 +197,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Capstane.Controllers.EmailController",
+    "ContainingType": "Capstone.Controllers.EmailController",
     "Method": "SendReport",
     "RelativePath": "api/send-report",
     "HttpMethod": "POST",
@@ -206,7 +206,7 @@
     "Parameters": [
       {
         "Name": "reportRequest",
-        "Type": "Capstane.Controllers.EmailController\u002BReportRequest",
+        "Type": "Capstone.Controllers.EmailController\u002BReportRequest",
         "IsRequired": true
       }
     ],

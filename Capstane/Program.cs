@@ -39,6 +39,8 @@ namespace Capstane
 
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
+            builder.Services.AddTransient<PdfGenerator>();
+
 
             builder.Services.AddCors(options =>
 			{

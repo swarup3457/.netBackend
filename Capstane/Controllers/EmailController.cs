@@ -5,9 +5,14 @@ using System.Globalization;
 using System.Net.Mail;
 using System.Net;
 using Capstone.Services;
-using CsvHelper;
+using System.IO;
+using System.Collections.Generic; // Ensure this is included
+using PdfSharpCore.Drawing; // Adjust depending on your library usage
+using PdfSharpCore.Pdf;
+using CapstoneDAL.Models;
+using CapstoneDAL.Models.Dtos;
 
-namespace Capstane.Controllers
+namespace Capstone.Controllers // Corrected namespace
 {
     [Route("api")]
     [ApiController]
@@ -15,11 +20,13 @@ namespace Capstane.Controllers
     {
         private readonly TicketService _ticketRepository;
         private readonly IConfiguration _configuration;
+        private readonly PdfGenerator _pdfGenerator;
 
-        public EmailController(TicketService ticketRepository, IConfiguration configuration)
+        public EmailController(TicketService ticketRepository, IConfiguration configuration, PdfGenerator pdfGenerator)
         {
             _ticketRepository = ticketRepository;
             _configuration = configuration;
+            _pdfGenerator = pdfGenerator; // Initialize PdfGenerator
         }
 
         [HttpPost("send-report")]
@@ -27,8 +34,16 @@ namespace Capstane.Controllers
         {
             try
             {
-                var startDate = DateTime.Parse(reportRequest.DateRange.Start);
-                var endDate = DateTime.Parse(reportRequest.DateRange.End);
+                // Use DateTime.TryParse to safely parse the strings to DateTime
+                if (!DateTime.TryParse(reportRequest.DateRange.Start, out var startDate))
+                {
+                    return BadRequest("Invalid start date format.");
+                }
+
+                if (!DateTime.TryParse(reportRequest.DateRange.End, out var endDate))
+                {
+                    return BadRequest("Invalid end date format.");
+                }
 
                 List<Ticket> tickets;
 
@@ -41,32 +56,16 @@ namespace Capstane.Controllers
                     tickets = await _ticketRepository.FindTicketsByCreatedAtBetweenAsync(startDate, endDate);
                 }
 
-                // Generate CSV file
-                var csvFilePath = Path.Combine(Path.GetTempPath(), "ticket_report.csv");
-                using (var writer = new StreamWriter(csvFilePath))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                // Create DateRange object with string properties
+                var dateRange = new DateRange
                 {
-                    csv.WriteField("Ticket ID");
-                    csv.WriteField("Subject");
-                    csv.WriteField("Priority");
-                    csv.WriteField("Status");
-                    csv.WriteField("Assigned Agent");
-                    csv.WriteField("Created At");
-                    csv.WriteField("Updated At");
-                    csv.NextRecord();
+                    Start = reportRequest.DateRange.Start,
+                    End = reportRequest.DateRange.End
+                };
 
-                    foreach (var ticket in tickets)
-                    {
-                        csv.WriteField(ticket.Id);
-                        csv.WriteField(ticket.Subject);
-                        csv.WriteField(ticket.Priority);
-                        csv.WriteField(ticket.Status);
-                        csv.WriteField(ticket.AssignedAgent ?? "Unassigned");
-                        csv.WriteField(ticket.CreatedAt);
-                        csv.WriteField(ticket.UpdatedAt);
-                        csv.NextRecord();
-                    }
-                }
+                // Generate PDF report using PdfGenerator
+                var pdfFilePath = Path.Combine(Path.GetTempPath(), "ticket_report.pdf");
+                _pdfGenerator.CreatePdf(pdfFilePath, tickets, dateRange); // Pass the DateRange object
 
                 // Send Email
                 using (var mailMessage = new MailMessage())
@@ -75,7 +74,7 @@ namespace Capstane.Controllers
                     mailMessage.Subject = "Your Report";
                     mailMessage.Body = $"Here is your requested report for the date range: {reportRequest.DateRange.Start} to {reportRequest.DateRange.End}";
                     mailMessage.To.Add(string.Join(",", reportRequest.Emails));
-                    mailMessage.Attachments.Add(new Attachment(csvFilePath));
+                    mailMessage.Attachments.Add(new Attachment(pdfFilePath));
 
                     using (var smtpClient = new SmtpClient("smtp.gmail.com", 587))
                     {
@@ -86,36 +85,30 @@ namespace Capstane.Controllers
                     }
                 }
 
-                // Delete the CSV file after sending
-                System.IO.File.Delete(csvFilePath);
+                // Delete the PDF file after sending
+                System.IO.File.Delete(pdfFilePath);
 
                 return Ok("Report sent successfully");
             }
             catch (SmtpException smtpEx)
             {
-                // Log more details for debugging
                 Console.WriteLine($"SMTP Exception: {smtpEx.Message} - Status Code: {smtpEx.StatusCode}");
                 return StatusCode(500, "Email sending failed: " + smtpEx.Message);
             }
             catch (Exception ex)
             {
-                // Log the full exception details
                 Console.WriteLine(ex.ToString());
                 return StatusCode(500, "Failed to send report");
             }
         }
 
-        public class ReportRequest              
+        public class ReportRequest
         {
             public List<string> Emails { get; set; }
             public DateRange DateRange { get; set; }
             public long? UserId { get; set; }
         }
 
-        public class DateRange
-        {
-            public string Start { get; set; }
-            public string End { get; set; }
-        }
+      
     }
 }

@@ -96,5 +96,12 @@ namespace Capstone.Controllers
             }
         }
         // You can add more methods like GetAllTickets, UpdateTicket, DeleteTicket, etc.
+
+
+
+
+
+
+
     }
 }
