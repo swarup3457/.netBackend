@@ -125,8 +125,25 @@ namespace Capstone.Controllers
         }
 
 
+		[HttpGet("userfindbyticketname/{id}")]
+		public async Task<IActionResult> pk(string id)
+		{
+			// Call the UserDet method to get the user's name associated with the ticket
+			var userName = await _ticketService.UserDet(id);
+
+			// Check if userName is null
+			if (userName == null)
+			{
+				return NotFound(); // Return 404 if the user is not found
+			}
+
+			// Return the user's name in the response
+			return Ok(userName); // Return 200 OK with the user name
+		}
 
 
 
-    }
+
+
+	}
 }

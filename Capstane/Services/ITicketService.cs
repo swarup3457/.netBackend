@@ -33,5 +33,12 @@ namespace Capstone.Services
 
 
 
+
+
+		public Task<string> UserDet(String id);
+        //public string UserDet(String id);
+
+
+
     }
 }

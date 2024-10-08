@@ -5106,7 +5106,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PV28818\\.nuget\\packages\\": {}
+    "C:\\Users\\P12BC9A\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -5114,11 +5114,11 @@
       "projectUniqueName": "C:\\Project\\Capstane\\Capstane.csproj",
       "projectName": "Capstane",
       "projectPath": "C:\\Project\\Capstane\\Capstane.csproj",
-      "packagesPath": "C:\\Users\\PV28818\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\P12BC9A\\.nuget\\packages\\",
       "outputPath": "C:\\Project\\Capstane\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\PV28818\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\P12BC9A\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

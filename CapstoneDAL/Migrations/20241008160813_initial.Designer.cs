@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CapstoneDAL.Migrations
 {
     [DbContext(typeof(CapstoneDbContext))]
-    [Migration("20241008075226_MessageAdded")]
-    partial class MessageAdded
+    [Migration("20241008160813_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

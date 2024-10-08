@@ -16,7 +16,7 @@ public class TicketDto
 
     public string? AssignedAgent { get; set; } // Store the agent's name, now nullable
 
-    public int? AssignedAgentId { get; set; } // Nullable Assigned Agent ID
+    public long? AssignedAgentId { get; set; } // Nullable Assigned Agent ID
 
     public DateTime CreatedAt { get; set; } // Date of creation
 

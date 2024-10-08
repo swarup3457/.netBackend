@@ -32,6 +32,7 @@ namespace Capstone.Services
                 UserId = ticketDto.UserId // Set UserId from DTO
             };
 
+
             // Add the new ticket to the context and save changes to the database
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();  // Save first to generate the Ticket ID
@@ -63,60 +64,93 @@ namespace Capstone.Services
 
 
 
-        public async Task<List<TicketDto>> GetAllTicketsAsync()
-        {
-            return await _context.Tickets
-                .Select(t => new TicketDto
-                {
-                    Id = t.Id,
-                    Subject = t.Subject,
-                    Priority = t.Priority,
-                    Status = t.Status,
-                    AssignedAgent = t.AssignedAgent,
-                    CreatedAt = t.CreatedAt,
-                    UpdatedAt = t.UpdatedAt,
-                    UserId = t.UserId
-                })
-                .ToListAsync();
-        }
+		public async Task<List<TicketDto>> GetAllTicketsAsync()
+		{
+			return await _context.Tickets
+				.Include(t => t.Messages) // Include messages
+				.Select(t => new TicketDto
+				{
+					Id = t.Id,
+					Subject = t.Subject,
+					Priority = t.Priority,
+					Status = t.Status,
+					AssignedAgent = t.AssignedAgent,
+					AssignedAgentId = t.AgentId, // Map AssignedAgentId from the AgentId property
+					CreatedAt = t.CreatedAt,
+					UpdatedAt = t.UpdatedAt,
+					UserId = t.UserId,
+					Messages = t.Messages.Select(m => new MessageDto // Map messages to MessageDto
+					{
+						Content = m.Content,
+						Attachment = m.Attachment,
+						AttachmentType = m.AttachmentType,
+						AttachmentName = m.AttachmentName,
+						TicketId = m.TicketId
+					}).ToList()
+				})
+				.ToListAsync();
+		}
 
-        public async Task<TicketDto> GetTicketByIdAsync(string id)
-        {
-            var ticket = await _context.Tickets.FindAsync(id);
-            return new TicketDto
-            {
-                Id = ticket.Id,
-                Subject = ticket.Subject,
-                Priority = ticket.Priority,
-                Status = ticket.Status,
-                AssignedAgent = ticket.AssignedAgent,
-                CreatedAt = ticket.CreatedAt,
-                UpdatedAt = ticket.UpdatedAt,
-                UserId = ticket.UserId
-            };
-        }
-
-        public async Task<List<TicketDto>> GetTicketsByUserIdAsync(long userId)
-        {
-            return await _context.Tickets
-                .Where(t => t.UserId == userId)
-                .Select(t => new TicketDto
-                {
-                    Id = t.Id,
-                    Subject = t.Subject,
-                    Priority = t.Priority,
-                    Status = t.Status,
-                    AssignedAgent = t.AssignedAgent,
-                    CreatedAt = t.CreatedAt,
-                    UpdatedAt = t.UpdatedAt,
-                    UserId = t.UserId
-                })
-                .ToListAsync();
-        }
+		public async Task<TicketDto> GetTicketByIdAsync(string id)
+		{
+			var ticket = await _context.Tickets
+				.Include(t => t.Messages) // Include messages
+				.FirstOrDefaultAsync(t => t.Id == id);
 
 
-        // Update a ticket with new values
-        public async Task<TicketDto?> UpdateTicketAsync(string id, TicketDto updatedTicketDto)
+			return new TicketDto
+			{
+				Id = ticket.Id,
+				Subject = ticket.Subject,
+				Priority = ticket.Priority,
+				Status = ticket.Status,
+				AssignedAgent = ticket.AssignedAgent,
+				AssignedAgentId = ticket.AgentId, // Map AssignedAgentId from the AgentId property
+				CreatedAt = ticket.CreatedAt,
+				UpdatedAt = ticket.UpdatedAt,
+				UserId = ticket.UserId,
+				Messages = ticket.Messages.Select(m => new MessageDto
+				{
+					Content = m.Content,
+					Attachment = m.Attachment,
+					AttachmentType = m.AttachmentType,
+					AttachmentName = m.AttachmentName,
+					TicketId = m.TicketId
+				}).ToList()
+			};
+		}
+
+		public async Task<List<TicketDto>> GetTicketsByUserIdAsync(long userId)
+		{
+			return await _context.Tickets
+				.Include(t => t.Messages) // Include messages
+				.Where(t => t.UserId == userId)
+				.Select(t => new TicketDto
+				{
+					Id = t.Id,
+					Subject = t.Subject,
+					Priority = t.Priority,
+					Status = t.Status,
+					AssignedAgent = t.AssignedAgent,
+					AssignedAgentId = t.AgentId,
+					CreatedAt = t.CreatedAt,
+					UpdatedAt = t.UpdatedAt,
+					UserId = t.UserId,
+					Messages = t.Messages.Select(m => new MessageDto
+					{
+						Content = m.Content,
+						Attachment = m.Attachment,
+						AttachmentType = m.AttachmentType,
+						AttachmentName = m.AttachmentName,
+						TicketId = m.TicketId
+					}).ToList()
+				})
+				.ToListAsync();
+		}
+
+
+		// Update a ticket with new values
+		public async Task<TicketDto?> UpdateTicketAsync(string id, TicketDto updatedTicketDto)
         {
             // Find the ticket in the database
             var ticket = await _context.Tickets.FindAsync(id);
@@ -233,21 +267,58 @@ namespace Capstone.Services
 		}
 
 
-        // Delete a ticket by ID
+		// Delete a ticket by ID
 
-        public async Task DeleteTicketAsync(string id)
-        {
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket == null) throw new Exception("Ticket not found");
+		//public async Task DeleteTicketAsync(string id)
+		//{
+		//	// Eagerly load the Ticket along with its User entity
+		//	var ticket = await _context.Tickets
+		//		.Include(t => t.User) // Include User details
+		//		.FirstOrDefaultAsync(t => t.Id == id);
 
-            var deletedTicket = new DeletedTicket(ticket);
-            await _context.DeletedTickets.AddAsync(deletedTicket);
+		//	if (ticket == null)
+		//	{
+		//		throw new Exception("Ticket not found");
+		//	}
 
-            _context.Tickets.Remove(ticket);
-            await _context.SaveChangesAsync();
-        }
+		//	// Create a DeletedTicket from the Ticket entity
+		//	var deletedTicket = new DeletedTicket(ticket);
 
-        public async Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto)
+		//	// Add the deleted ticket to the context
+		//	await _context.DeletedTickets.AddAsync(deletedTicket);
+
+		//	// Remove the ticket from the Tickets table
+		//	_context.Tickets.Remove(ticket);
+
+		//	// Save all changes to the database
+		//	await _context.SaveChangesAsync();
+		//}
+
+		public async Task DeleteTicketAsync(string id)
+
+		{
+
+			var ticket = await _context.Tickets
+
+				.Include(t => t.User) // Ensure the user is included
+
+				.FirstOrDefaultAsync(t => t.Id == id);
+
+			if (ticket == null) throw new Exception("Ticket not found");
+
+			var deletedTicket = new DeletedTicket(ticket); // Create DeletedTicket from existing ticket
+
+			await _context.DeletedTickets.AddAsync(deletedTicket); // Add to DeletedTickets table
+
+			_context.Tickets.Remove(ticket); // Remove from Tickets table
+
+			await _context.SaveChangesAsync(); // Save changes
+
+		}
+
+
+
+		public async Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto)
 
         {
 
@@ -316,6 +387,27 @@ namespace Capstone.Services
             };
 
         }
+
+
+
+        public async Task<string> UserDet(string id)
+        {
+            // Use FindAsync to retrieve the ticket by ID, which includes the User navigation property
+            var ticket = await _context.Tickets.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == id);
+
+            // Check if the ticket exists
+            if (ticket == null || ticket.User == null)
+            {
+                return null; // Return null if ticket or user is not found
+            }
+
+            // Return the user's name
+            return ticket.User.Name; // Assuming User has a Name property
+        }
+
+
+
+
 
 
     }
