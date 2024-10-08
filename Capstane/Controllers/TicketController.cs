@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Capstone.Models;
 using Capstone.Services;
 using Microsoft.EntityFrameworkCore;
+using CapstoneDAL.Models.Dtos;
 
 namespace Capstone.Controllers
 {
@@ -98,6 +99,30 @@ namespace Capstone.Controllers
         // You can add more methods like GetAllTickets, UpdateTicket, DeleteTicket, etc.
 
 
+
+        [HttpPost("{id}/messages")]
+        public async Task<IActionResult> AddMessageToTicket(string id, [FromBody] MessageDto messageDto)
+        {
+            // Validate the messageDto input
+            if (messageDto.Content == null && messageDto.Attachment == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                // Call the async method from the service to add a message to the ticket
+                var newMessage = await _ticketService.AddMessageToTicketAsync(id, messageDto);
+
+                // Return a 201 Created response with the new message data
+                return CreatedAtAction(nameof(AddMessageToTicket), new { id = newMessage.TicketId }, newMessage);
+            }
+            catch (Exception ex)
+            {
+                // Handle any potential errors, such as "Ticket not found"
+                return NotFound(new { Message = ex.Message });
+            }
+        }
 
 
 

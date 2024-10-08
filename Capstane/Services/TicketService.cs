@@ -247,5 +247,76 @@ namespace Capstone.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto)
+
+        {
+
+            // Find the ticket asynchronously using the Tickets DbSet
+
+            var existingTicket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+
+            if (existingTicket == null)
+
+            {
+
+                throw new Exception("Ticket not found");
+
+            }
+
+            // Create a new message entity
+
+            var newMessage = new MessageTable
+
+            {
+
+                Content = messageDto.Content,
+
+                Attachment = messageDto.Attachment,
+
+                AttachmentType = messageDto.AttachmentType,
+
+                AttachmentName = messageDto.AttachmentName,
+
+                TicketId = existingTicket.Id // Reference the ticket's ID
+
+            };
+
+            // Add the new message to the Messages DbSet (with correct name)
+
+            await _context.message.AddAsync(newMessage);
+
+            // Save changes to the database
+
+            await _context.SaveChangesAsync();
+
+            // Return the message DTO
+
+            return ConvertToDto(newMessage);
+
+        }
+
+        public MessageDto ConvertToDto(MessageTable message)
+
+        {
+
+            return new MessageDto
+
+            {
+
+                Content = message.Content,
+
+                Attachment = message.Attachment,
+
+                AttachmentType = message.AttachmentType,
+
+                AttachmentName = message.AttachmentName,
+
+                TicketId = message.Ticket.Id.ToString()  // Assuming Ticket.Id is of type long
+
+            };
+
+        }
+
+
     }
 }

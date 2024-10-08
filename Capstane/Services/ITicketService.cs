@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Capstone.Models;
 using Capstone.Models.Entities;
+using CapstoneDAL.Models.Dtos;
 using DeleteTickets.Models.Entities;
 
 namespace Capstone.Services
@@ -26,6 +27,10 @@ namespace Capstone.Services
 
         Task<List<TicketDto>> GetTicketsByUserIdAsync(long userId);
         //Task<List<TicketDto>> GetTicketsByAgentIdAsync(long agentId);
+
+        // Add async method for adding message to a ticket
+        Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto);
+
 
 
     }
