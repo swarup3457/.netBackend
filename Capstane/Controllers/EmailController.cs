@@ -105,7 +105,7 @@ namespace Capstane.Controllers
             }
         }
 
-        public class ReportRequest
+        public class ReportRequest              
         {
             public List<string> Emails { get; set; }
             public DateRange DateRange { get; set; }

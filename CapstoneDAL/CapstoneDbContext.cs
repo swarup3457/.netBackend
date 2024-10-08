@@ -1,6 +1,7 @@
 ﻿using Capstone.Models;
 using Capstone.Models.Entities;
 using CapstoneDAL.Models;
+using DeleteTickets.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CapstoneDAL
@@ -13,6 +14,9 @@ namespace CapstoneDAL
 		public DbSet<DisplayAgent> DisplayAgents { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
 
+		public DbSet<DeletedTicket> DeletedTickets { get; set; }
+
+        public DbSet<MessageTable> message { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

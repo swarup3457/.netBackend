@@ -31,6 +31,52 @@
     ]
   },
   {
+    "ContainingType": "DeleteTickets.Controllers.DeletedTicketController",
+    "Method": "GetDeletedTicketById",
+    "RelativePath": "api/deletedtickets/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DeleteTickets.Models.Entities.DeletedTicket",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DeleteTickets.Controllers.DeletedTicketController",
+    "Method": "GetAllDeletedTickets",
+    "RelativePath": "api/deletedtickets/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[DeleteTickets.Models.Entities.DeletedTicket, CapstoneDAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "TicketManagement.Controllers.DisplayAgentController",
     "Method": "AddAgentToDisplayAgents",
     "RelativePath": "api/DisplayAgent",
@@ -184,6 +230,26 @@
   },
   {
     "ContainingType": "Capstone.Controllers.TicketsController",
+    "Method": "GetAllTickets",
+    "RelativePath": "api/Tickets",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[TicketDto, CapstoneDAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Capstone.Controllers.TicketsController",
     "Method": "GetTicketById",
     "RelativePath": "api/Tickets/{id}",
     "HttpMethod": "GET",
@@ -197,6 +263,48 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Capstone.Controllers.TicketsController",
+    "Method": "DeleteTicket",
+    "RelativePath": "api/Tickets/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Capstone.Controllers.TicketsController",
+    "Method": "GetTicketsByUserId",
+    "RelativePath": "api/Tickets/{userId}/tickets",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[TicketDto, CapstoneDAL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "Capstane.Controllers.UsersController",

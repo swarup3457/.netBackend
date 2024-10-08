@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Capstone.Models.Entities;
+using CapstoneDAL.Models;
 
 namespace Capstone.Models.Entities
 {
@@ -35,6 +36,14 @@ namespace Capstone.Models.Entities
 
         [JsonIgnore]
         public DisplayAgent AssignedAgentEntity { get; set; } // Navigation property to DisplayAgent
+
+
+        [JsonIgnore]
+        public virtual ICollection<MessageTable>? Messages { get; set; } = new List<MessageTable>();
+
+
+        [ForeignKey("UserId")]
+        public UserDetails User { get; set; }
 
         // Constructor to initialize default values
         public Ticket()

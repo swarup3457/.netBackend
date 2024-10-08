@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CapstoneDAL.Models.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 public class TicketDto
 {
@@ -20,6 +21,8 @@ public class TicketDto
     public DateTime CreatedAt { get; set; } // Date of creation
 
     public DateTime UpdatedAt { get; set; } // Date of last update
+
+    public List<MessageDto>Messages { get; set; }
 
     [Required] // Assuming UserId should always be present
     public long UserId { get; set; }

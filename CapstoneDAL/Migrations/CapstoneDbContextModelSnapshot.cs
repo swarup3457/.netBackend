@@ -50,6 +50,38 @@ namespace CapstoneDAL.Migrations
                     b.ToTable("display_agents", (string)null);
                 });
 
+            modelBuilder.Entity("Capstone.Models.Entities.MessageTable", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<byte[]>("Attachment")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("AttachmentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttachmentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TicketId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("messages");
+                });
+
             modelBuilder.Entity("Capstone.Models.Entities.Ticket", b =>
                 {
                     b.Property<string>("Id")
@@ -86,6 +118,8 @@ namespace CapstoneDAL.Migrations
 
                     b.HasIndex("AgentId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Tickets");
                 });
 
@@ -118,6 +152,60 @@ namespace CapstoneDAL.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("DeleteTickets.Models.Entities.DeletedTicket", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<long?>("AgentId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AssignedAgent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("trash_tickets");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Entities.MessageTable", b =>
+                {
+                    b.HasOne("Capstone.Models.Entities.Ticket", "Ticket")
+                        .WithMany("Messages")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+                });
+
             modelBuilder.Entity("Capstone.Models.Entities.Ticket", b =>
                 {
                     b.HasOne("Capstone.Models.DisplayAgent", "AssignedAgentEntity")
@@ -125,12 +213,25 @@ namespace CapstoneDAL.Migrations
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("CapstoneDAL.Models.UserDetails", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("AssignedAgentEntity");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Capstone.Models.DisplayAgent", b =>
                 {
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Entities.Ticket", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

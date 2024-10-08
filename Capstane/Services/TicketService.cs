@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Capstone.Models;
 using Capstone.Models.Entities;
 using CapstoneDAL;
+using DeleteTickets.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
+using CapstoneDAL.Models.Dtos;
 
 namespace Capstone.Services
 {
@@ -30,36 +33,87 @@ namespace Capstone.Services
             };
 
             // Add the new ticket to the context and save changes to the database
-            await _context.Tickets.AddAsync(ticket);
-            await _context.SaveChangesAsync();
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();  // Save first to generate the Ticket ID
+
+            // Now that the ticket is saved, we have the Ticket ID
+            if (ticketDto.Messages != null)
+            {
+                foreach (var messageDto in ticketDto.Messages)
+                {
+                    var message = new MessageTable
+                    {
+                        Content = messageDto.Content,
+                        Attachment = messageDto.Attachment,
+                        AttachmentType = messageDto.AttachmentType,
+                        AttachmentName = messageDto.AttachmentName,
+                        TicketId = ticket.Id // Now ticket.Id is assigned after saving
+                    };
+
+                    _context.message.Add(message);  // Add the message without saving yet
+                }
+
+                // Only save changes once, after all messages are added
+                await _context.SaveChangesAsync();
+            }
 
             // Convert the saved ticket back to a DTO and return it
             return ConvertToDto(ticket);
         }
 
-        // Retrieve all tickets
+
+
         public async Task<List<TicketDto>> GetAllTicketsAsync()
         {
-            // Include the AssignedAgent details in the result
-            var tickets = await _context.Tickets
-                .Include(t => t.AssignedAgentEntity) // Eager load the AssignedAgent navigation property
+            return await _context.Tickets
+                .Select(t => new TicketDto
+                {
+                    Id = t.Id,
+                    Subject = t.Subject,
+                    Priority = t.Priority,
+                    Status = t.Status,
+                    AssignedAgent = t.AssignedAgent,
+                    CreatedAt = t.CreatedAt,
+                    UpdatedAt = t.UpdatedAt,
+                    UserId = t.UserId
+                })
                 .ToListAsync();
-
-            // Convert each Ticket entity to a TicketDto and return the list
-            return tickets.ConvertAll(ConvertToDto);
         }
 
-        // Retrieve a specific ticket by ID
-        public async Task<TicketDto?> GetTicketByIdAsync(string id)
+        public async Task<TicketDto> GetTicketByIdAsync(string id)
         {
-            // Include the AssignedAgent details in the result
-            var ticket = await _context.Tickets
-                .Include(t => t.AssignedAgentEntity) // Corrected property name
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            // Convert the entity to a DTO and return it, or return null if not found
-            return ticket != null ? ConvertToDto(ticket) : null;
+            var ticket = await _context.Tickets.FindAsync(id);
+            return new TicketDto
+            {
+                Id = ticket.Id,
+                Subject = ticket.Subject,
+                Priority = ticket.Priority,
+                Status = ticket.Status,
+                AssignedAgent = ticket.AssignedAgent,
+                CreatedAt = ticket.CreatedAt,
+                UpdatedAt = ticket.UpdatedAt,
+                UserId = ticket.UserId
+            };
         }
+
+        public async Task<List<TicketDto>> GetTicketsByUserIdAsync(long userId)
+        {
+            return await _context.Tickets
+                .Where(t => t.UserId == userId)
+                .Select(t => new TicketDto
+                {
+                    Id = t.Id,
+                    Subject = t.Subject,
+                    Priority = t.Priority,
+                    Status = t.Status,
+                    AssignedAgent = t.AssignedAgent,
+                    CreatedAt = t.CreatedAt,
+                    UpdatedAt = t.UpdatedAt,
+                    UserId = t.UserId
+                })
+                .ToListAsync();
+        }
+
 
         // Update a ticket with new values
         public async Task<TicketDto?> UpdateTicketAsync(string id, TicketDto updatedTicketDto)
@@ -85,18 +139,6 @@ namespace Capstone.Services
             return ConvertToDto(ticket);
         }
 
-        // Delete a ticket by ID
-        public async Task DeleteTicketAsync(string id)
-        {
-            // Find the ticket in the database
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
-            {
-                // Remove the ticket from the context and save changes
-                _context.Tickets.Remove(ticket);
-                await _context.SaveChangesAsync();
-            }
-        }
 
         // Convert Ticket entity to TicketDto
         private TicketDto ConvertToDto(Ticket ticket)
@@ -110,7 +152,21 @@ namespace Capstone.Services
                 AssignedAgent = ticket.AssignedAgent, // Correctly mapping AssignedAgent
                 CreatedAt = ticket.CreatedAt,
                 UpdatedAt = ticket.UpdatedAt,
-                UserId = ticket.UserId
+                UserId = ticket.UserId,
+                Messages = ticket.Messages.Select(message => new MessageDto
+
+                {
+
+                    Content = message.Content,
+
+                    Attachment = message.Attachment,
+
+                    AttachmentType = message.AttachmentType,
+
+                    AttachmentName = message.AttachmentName
+
+                }).ToList()
+
             };
         }
 
@@ -125,6 +181,7 @@ namespace Capstone.Services
                 Status = ticketDto.Status ?? "NEW",
                 AssignedAgent = ticketDto.AssignedAgent, // Map AssignedAgent back
                 UserId = ticketDto.UserId
+
             };
         }
 
@@ -161,6 +218,34 @@ namespace Capstone.Services
             return tickets;
         }
 
+
+
+
+
+		public async Task<List<DeletedTicket>> GetAllDeletedTicketsAsync()
+		{
+			return await _context.DeletedTickets.ToListAsync();
+		}
+
+		public async Task<List<DeletedTicket>> GetDeletedTicketByIdAsync(long userId)
+		{
+			return await _context.DeletedTickets.Where(u => u.UserId == userId).ToListAsync(); ;
+		}
+
+
+        // Delete a ticket by ID
+
+        public async Task DeleteTicketAsync(string id)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null) throw new Exception("Ticket not found");
+
+            var deletedTicket = new DeletedTicket(ticket);
+            await _context.DeletedTickets.AddAsync(deletedTicket);
+
+            _context.Tickets.Remove(ticket);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

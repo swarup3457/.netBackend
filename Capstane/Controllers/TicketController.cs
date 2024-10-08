@@ -59,6 +59,42 @@ namespace Capstone.Controllers
             return Ok(ticket);
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult<List<TicketDto>>> GetAllTickets()
+        {
+            var tickets = await _ticketService.GetAllTicketsAsync();
+            return Ok(tickets);
+        }
+
+
+
+
+        [HttpGet("{userId}/tickets")] // Updated route for getting tickets by user ID
+        public async Task<ActionResult<List<TicketDto>>> GetTicketsByUserId(long userId)
+        {
+            var tickets = await _ticketService.GetTicketsByUserIdAsync(userId);
+            if (tickets == null || tickets.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(tickets);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTicket(string id)
+        {
+            try
+            {
+                await _ticketService.DeleteTicketAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
         // You can add more methods like GetAllTickets, UpdateTicket, DeleteTicket, etc.
     }
 }
