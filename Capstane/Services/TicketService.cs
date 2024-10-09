@@ -151,31 +151,40 @@ namespace Capstone.Services
 
 		// Update a ticket with new values
 		public async Task<TicketDto?> UpdateTicketAsync(string id, TicketDto updatedTicketDto)
-        {
-            // Find the ticket in the database
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket == null)
-            {
-                return null; // Return null if the ticket is not found
-            }
+		{
+			// Find the ticket in the database
+			var ticket = await _context.Tickets.FindAsync(id);
+			if (ticket == null)
+			{
+				return null; // Return null if the ticket is not found
+			}
 
-            // Update the ticket properties with values from the DTO
-            ticket.Subject = updatedTicketDto.Subject;
-            ticket.Priority = updatedTicketDto.Priority;
-            ticket.Status = updatedTicketDto.Status ?? ticket.Status; // Use existing status if not provided
-            ticket.AssignedAgent = updatedTicketDto.AssignedAgent; // Update the AssignedAgent
-            ticket.UpdatedAt = DateTime.UtcNow; // Update the last modified timestamp
+			// Update the ticket properties with values from the DTO
+			if (updatedTicketDto.Status != null)
+			{
+				ticket.Status = updatedTicketDto.Status;
+			}
 
-            // Save the changes to the database
-            await _context.SaveChangesAsync();
+			if (updatedTicketDto.Priority != null)
+			{
+				ticket.Priority = updatedTicketDto.Priority;
+			}
 
-            // Convert the updated ticket back to a DTO and return it
-            return ConvertToDto(ticket);
-        }
+			// Update last modified timestamp
+			ticket.UpdatedAt = DateTime.UtcNow;
+
+			// Save the changes to the database
+			await _context.SaveChangesAsync();
+
+			// Convert the updated ticket back to a DTO and return it
+			return ConvertToDto(ticket);
+		}
 
 
-        // Convert Ticket entity to TicketDto
-        private TicketDto ConvertToDto(Ticket ticket)
+
+
+		// Convert Ticket entity to TicketDto
+		private TicketDto ConvertToDto(Ticket ticket)
         {
             return new TicketDto
             {
@@ -318,6 +327,38 @@ namespace Capstone.Services
 
 
 
+		public async Task<List<MessageDto>> GetMessagesForTicketAsync(string ticketId)
+
+		{
+
+			// Find the ticket by its ID, or throw an exception if not found
+
+			var ticket = await _context.Tickets
+
+				.Include(t => t.Messages) // Eagerly load related messages
+
+				.FirstOrDefaultAsync(t => t.Id == ticketId);
+
+			if (ticket == null)
+
+			{
+
+				throw new Exception("Ticket not found");
+
+			}
+
+			// Convert the list of messages to DTOs and return them
+
+			return ticket.Messages
+
+				.Select(message => ConvertToDto(message))
+
+				.ToList();
+
+		}
+
+
+
 		public async Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto)
 
         {
@@ -407,8 +448,5 @@ namespace Capstone.Services
 
 
 
-
-
-
-    }
+	}
 }

@@ -125,6 +125,67 @@ namespace Capstone.Controllers
         }
 
 
+		[HttpGet("{id}/messages")]
+
+		public async Task<IActionResult> GetMessagesForTicket(string id)
+
+		{
+
+			try
+
+			{
+
+				// Call the service layer to get the messages
+
+				var messages = await _ticketService.GetMessagesForTicketAsync(id);
+
+				return Ok(messages); // Return 200 OK with the list of messages
+
+			}
+
+			catch (Exception ex)
+
+			{
+
+				// Return 404 Not Found if ticket is not found
+
+				return NotFound(new { Message = ex.Message });
+
+			}
+
+		}
+
+		[HttpPut("{id}")]
+		public async Task<IActionResult> UpdateTicket(string id, [FromBody] TicketDto updatedTicketDto)
+		{
+			// Check if both subject and priority are null, return BadRequest if true
+			if (updatedTicketDto.Subject == null && updatedTicketDto.Priority == null)
+			{
+				return BadRequest(); // Equivalent to HttpStatus.BAD_REQUEST in Java
+			}
+
+			try
+			{
+				var updatedTicket = await _ticketService.UpdateTicketAsync(id, updatedTicketDto);
+
+				// If the ticket is not found, return NotFound (equivalent to HttpStatus.NOT_FOUND)
+				if (updatedTicket == null)
+				{
+					return NotFound();
+				}
+
+				// Return the updated ticket with status OK
+				return Ok(updatedTicket); // Equivalent to new ResponseEntity<>(updatedTicket, HttpStatus.OK)
+			}
+			catch (Exception ex)
+			{
+				// Log the exception if needed (optional)
+				return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the ticket.");
+			}
+		}
+
+
+
 		[HttpGet("userfindbyticketname/{id}")]
 		public async Task<IActionResult> pk(string id)
 		{

@@ -282,6 +282,27 @@
   },
   {
     "ContainingType": "Capstone.Controllers.TicketsController",
+    "Method": "UpdateTicket",
+    "RelativePath": "api/Tickets/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedTicketDto",
+        "Type": "TicketDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Capstone.Controllers.TicketsController",
     "Method": "AddMessageToTicket",
     "RelativePath": "api/Tickets/{id}/messages",
     "HttpMethod": "POST",
@@ -296,6 +317,22 @@
       {
         "Name": "messageDto",
         "Type": "CapstoneDAL.Models.Dtos.MessageDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Capstone.Controllers.TicketsController",
+    "Method": "GetMessagesForTicket",
+    "RelativePath": "api/Tickets/{id}/messages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

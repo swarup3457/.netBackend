@@ -32,6 +32,7 @@ namespace Capstone.Services
         Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto);
 
 
+       Task<List<MessageDto>> GetMessagesForTicketAsync(string ticketId);
 
 
 
