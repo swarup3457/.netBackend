@@ -1,5 +1,6 @@
 ﻿using CapstoneDAL; // Make sure to reference your DAL project
 using CapstoneDAL.Models;
+using CapstoneDAL.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -42,12 +43,16 @@ namespace Capstane.Services
 		public async Task<List<UserDetails>> GetAllUsersAsync()
 		{
 			return await _context.Users.ToListAsync();
+
 		}
 
 		// Get user by ID
-		public async Task<UserDetails> GetUserByIdAsync(long id)
+		public async Task<UserDto> GetUserByIdAsync(long id)
 		{
-			return await _context.Users.FindAsync(id);
+			UserDetails user= await _context.Users.FindAsync(id);
+			UserDto us = new UserDto(user);
+			return us;
+
 		}
 
 		// Update user

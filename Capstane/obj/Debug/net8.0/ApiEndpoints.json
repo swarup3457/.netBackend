@@ -197,7 +197,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Capstone.Controllers.EmailController",
+    "ContainingType": "Capstane.Controllers.EmailController",
     "Method": "SendReport",
     "RelativePath": "api/send-report",
     "HttpMethod": "POST",
@@ -206,7 +206,7 @@
     "Parameters": [
       {
         "Name": "reportRequest",
-        "Type": "Capstone.Controllers.EmailController\u002BReportRequest",
+        "Type": "Capstane.Controllers.EmailController\u002BReportRequest",
         "IsRequired": true
       }
     ],
@@ -366,6 +366,32 @@
   },
   {
     "ContainingType": "Capstone.Controllers.TicketsController",
+    "Method": "GetOldestTicketAsync",
+    "RelativePath": "api/Tickets/oldest/{agentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "agentId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TicketDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Capstone.Controllers.TicketsController",
     "Method": "pk",
     "RelativePath": "api/Tickets/userfindbyticketname/{id}",
     "HttpMethod": "GET",
@@ -432,7 +458,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "CapstoneDAL.Models.UserDetails",
+        "Type": "CapstoneDAL.Models.Dtos.UserDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -478,26 +504,5 @@
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Capstane.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Capstane.WeatherForecast, Capstane, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ],
-    "EndpointName": "GetWeatherForecast"
   }
 ]

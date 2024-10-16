@@ -242,17 +242,29 @@ namespace Capstone.Services
         }
 
 
-        public async Task<List<Ticket>> FindTicketsByUserIdAndCreatedAtBetweenAsync(long userId, DateTime startDate, DateTime endDate)
-        {
-            var tickets = await _context.Tickets
-                .Where(t => t.UserId == userId && t.CreatedAt >= startDate && t.CreatedAt <= endDate)
-                .ToListAsync();
+		//public async Task<List<Ticket>> FindTicketsByUserIdAndCreatedAtBetweenAsync(long userId, DateTime startDate, DateTime endDate)
+		//{
+		//    var tickets = await _context.Tickets
+		//        .Where(t => t.UserId == userId && t.CreatedAt >= startDate && t.CreatedAt <= endDate)
+		//        .ToListAsync();
 
-            return tickets;
-        }
+		//    return tickets;
+		//}
 
-        // Method to find tickets by a date range (without UserId)
-        public async Task<List<Ticket>> FindTicketsByCreatedAtBetweenAsync(DateTime startDate, DateTime endDate)
+		public async Task<List<Ticket>> FindTicketsByUserIdAndCreatedAtBetweenAsync(long userId, DateTime startDate, DateTime endDate)
+		{
+			var tickets = await _context.Tickets
+				.Where(t => t.UserId == userId &&
+							t.CreatedAt.Date >= startDate.Date &&
+							t.CreatedAt.Date <= endDate.Date)
+				.ToListAsync();
+
+			return tickets;
+		}
+
+
+		// Method to find tickets by a date range (without UserId)
+		public async Task<List<Ticket>> FindTicketsByCreatedAtBetweenAsync(DateTime startDate, DateTime endDate)
         {
             var tickets = await _context.Tickets
                 .Where(t => t.CreatedAt >= startDate && t.CreatedAt <= endDate)
@@ -447,6 +459,23 @@ namespace Capstone.Services
         }
 
 
+		public async Task<TicketDto?> GetOldestTicketAsync(long agentId)
+		{
+			// Find the oldest "InProgress" ticket assigned to the given agent
+			var ticket = await _context.Tickets
+				.Where(t => t.AgentId == agentId && t.Status == "InProgress")
+				.OrderBy(t => t.CreatedAt)  // Order by creation date (oldest first)
+				.FirstOrDefaultAsync();
+
+			// If no ticket is found, return null
+			if (ticket == null)
+			{
+				return null;
+			}
+
+			// Convert the ticket entity to a DTO and return it
+			return ConvertToDto(ticket);
+		}
 
 	}
 }

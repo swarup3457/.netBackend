@@ -11,12 +11,10 @@ namespace Capstone.Services
     {
         Task<TicketDto> CreateTicketAsync(TicketDto ticketDto);
         Task<List<TicketDto>> GetAllTicketsAsync();
-        Task<TicketDto?> GetTicketByIdAsync(string id); // Marked as nullable
+        Task<TicketDto?> GetTicketByIdAsync(string id); 
         Task<TicketDto> UpdateTicketAsync(string id, TicketDto updatedTicketDto);
         Task DeleteTicketAsync(string id);
 
-		//Task<List<DeletedTicket>> GetAllDeletedTicketsAsync();
-		//Task<DeletedTicket?> GetDeletedTicketByIdAsync(string id);
 
 		Task<List<DeletedTicket>> GetAllDeletedTicketsAsync();
 		Task<List<DeletedTicket>> GetDeletedTicketByIdAsync(long userId);
@@ -26,9 +24,7 @@ namespace Capstone.Services
 
 
         Task<List<TicketDto>> GetTicketsByUserIdAsync(long userId);
-        //Task<List<TicketDto>> GetTicketsByAgentIdAsync(long agentId);
 
-        // Add async method for adding message to a ticket
         Task<MessageDto> AddMessageToTicketAsync(string ticketId, MessageDto messageDto);
 
 
@@ -37,9 +33,11 @@ namespace Capstone.Services
 
 
 		public Task<string> UserDet(String id);
-        //public string UserDet(String id);
+
+		Task<TicketDto> GetOldestTicketAsync(long agentId);
 
 
 
-    }
+
+	}
 }

@@ -1,5 +1,7 @@
 ﻿using Capstane.Services;
 using CapstoneDAL.Models;
+using CapstoneDAL.Models.Dtos;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +9,8 @@ namespace Capstane.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[EnableCors("AllowAllOrigins")]
+
 	public class UsersController : ControllerBase
 	{
 		private readonly UserService _userService;
@@ -39,7 +43,7 @@ namespace Capstane.Controllers
 
 		// GET: api/users/{id}
 		[HttpGet("{id}")]
-		public async Task<ActionResult<UserDetails>> GetUserById(long id)
+		public async Task<ActionResult<UserDto>> GetUserById(long id)
 		{
 			var user = await _userService.GetUserByIdAsync(id);
 			if (user == null)

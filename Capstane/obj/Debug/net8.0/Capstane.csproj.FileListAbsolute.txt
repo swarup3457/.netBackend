@@ -305,3 +305,6 @@ C:\Project\Capstane\bin\Debug\net8.0\runtimes\osx\native\libSkiaSharp.dylib
 C:\Project\Capstane\bin\Debug\net8.0\runtimes\win-arm64\native\libSkiaSharp.dll
 C:\Project\Capstane\bin\Debug\net8.0\runtimes\win-x64\native\libSkiaSharp.dll
 C:\Project\Capstane\bin\Debug\net8.0\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Project\Capstane\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+C:\Project\Capstane\bin\Debug\net8.0\MailKit.dll
+C:\Project\Capstane\bin\Debug\net8.0\MimeKit.dll

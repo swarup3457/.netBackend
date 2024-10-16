@@ -9,7 +9,7 @@ namespace DeleteTickets.Controllers
 {
     [Route("api/deletedtickets")]
     [ApiController]
-    [EnableCors("AllowSpecificOrigin")] // Ensure CORS is configured in Startup.cs
+    [EnableCors("AllowAllOrigins")] // Ensure CORS is configured in Startup.cs
     public class DeletedTicketController : ControllerBase
     {
         private readonly ITicketService _ticketService;

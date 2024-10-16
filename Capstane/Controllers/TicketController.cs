@@ -4,12 +4,15 @@ using Capstone.Models;
 using Capstone.Services;
 using Microsoft.EntityFrameworkCore;
 using CapstoneDAL.Models.Dtos;
+using Microsoft.AspNetCore.Cors;
 
 namespace Capstone.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketsController : ControllerBase
+	[EnableCors("AllowAllOrigins")]
+
+	public class TicketsController : ControllerBase
     {
         private readonly ITicketService _ticketService;
 
@@ -203,6 +206,27 @@ namespace Capstone.Controllers
 		}
 
 
+		// GET api/tickets/oldest/{agentId}
+
+		[HttpGet("oldest/{agentId}")]
+
+		public async Task<ActionResult<TicketDto?>> GetOldestTicketAsync(long agentId)
+
+		{
+
+			var ticketDto = await _ticketService.GetOldestTicketAsync(agentId);
+
+			if (ticketDto == null)
+
+			{
+
+				return NotFound(); // Return 404 if no ticket is found
+
+			}
+
+			return Ok(ticketDto); // Return 200 with the ticket DTO
+
+		}
 
 
 

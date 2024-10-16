@@ -1,5 +1,6 @@
 ﻿using Capstane.Services;
 using Capstone.Models.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,9 @@ namespace Capstane.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class AdminController : ControllerBase
+	[EnableCors("AllowAllOrigins")]
+
+	public class AdminController : ControllerBase
     {
         private readonly AdminService _adminService;
 
